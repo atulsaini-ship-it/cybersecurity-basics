@@ -1,16 +1,42 @@
-# Simple Cybersecurity Password Analyzer
+# --- Simple Password Checker ---
 
-A lightweight Python application designed to demonstrate the core principles of defensive programming, password entropy, and user input validation. 
+# 1. Get the password from the user
+password = input("Enter a password to test: ")
 
-This project serves as a practical, foundational exploration into mitigating basic authentication vulnerabilities.
+print("\n--- Running Security Check ---")
 
-## 🛠️ Security Features Implemented
+# 2. Check for common/weak passwords (Dictionary Attack Check)
+if password == "123456" or password == "password" or password == "qwerty":
+    print("❌ CRITICAL: This password is too common! Easily hacked.")
 
-1. **Dictionary Attack Mitigation:** The script instantly flags highly common, historically leaked passwords (such as `123456` or `qwerty`) to prevent basic automated credential-guessing attacks.
+# 3. Check length and complexity using simple IF statements
+else:
+    score = 0
+    
+    # Check length
+    if len(password) >= 8:
+        score = score + 1
+    else:
+        print("⚠️ Warning: Password should be at least 8 characters long.")
+        
+    # Check if it contains a number
+    if any(char.isdigit() for char in password):
+        score = score + 1
+    else:
+        print("⚠️ Warning: Add at least one number (0-9).")
+        
+    # Check if it has an uppercase letter
+    if any(char.isupper() for char in password):
+        score = score + 1
+    else:
+        print("⚠️ Warning: Add at least one capital letter (A-Z).")
 
-2. **Complexity & Entropy Evaluation:** Uses conditional logic to programmatically verify structural strength requirements, including:
-   - Minimum character length threshold ($\ge 8$ characters).
-   - Numerical inclusion parsing (0-9).
-   - Character casing verification (Uppercase/Lowercase variation).
-
-3. **Dynamic Feedback Loop:** Provides real-time warning logs and computes a final security rating (`STRONG`, `MEDIUM`, or `WEAK`) to encourage secure user behavior.
+    # 4. Give final result based on points scored
+    print(f"\nFinal Score: {score}/3")
+    
+    if score == 3:
+        print("🟢 STRONG: Good complexity!")
+    elif score == 2:
+        print("🟡 MEDIUM: Acceptable, but follow the warnings above.")
+    else:
+        print("🔴 WEAK: Very easy to guess or brute-force.")
