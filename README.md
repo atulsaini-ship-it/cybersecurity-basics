@@ -4,7 +4,7 @@ A lightweight Python application designed to demonstrate the core principles of 
 
 This project serves as a practical, foundational exploration into mitigating basic authentication vulnerabilities.
 
-## 🛠️ Security Features Implemented
+##  Security Features Implemented
 
 1. **Dictionary Attack Mitigation:** The script instantly flags highly common, historically leaked passwords (such as `123456` or `qwerty`) to prevent basic automated credential-guessing attacks.
 
@@ -15,7 +15,7 @@ This project serves as a practical, foundational exploration into mitigating bas
 
 3. **Dynamic Feedback Loop:** Provides real-time warning logs and computes a final security rating (`STRONG`, `MEDIUM`, or `WEAK`) to encourage secure user behavior.
 
-## 🚀 How To Run Locally
+##  How To Run Locally
 
 Ensure you have Python installed, then execute the script via your terminal:
 
