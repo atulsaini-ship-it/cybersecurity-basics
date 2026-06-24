@@ -1,0 +1,84 @@
+import urllib.request
+import sys
+
+
+target_url = input("Enter website to audit (e.g., google.com): ").strip()
+
+if not target_url.startswith("http://") and not target_url.startswith("https://"):
+    target_url = "https://" + target_url
+
+print("\n" + "="*60)
+print(f"  AUDITING SECURITY HEADERS & CALCULATING RISK FOR: {target_url}")
+print("="*60 + "\n")
+
+
+
+security_headers = {
+    "Content-Security-Policy": {
+        "desc": "Blocks malicious scripts (XSS attacks).", 
+        "weight": 30
+    },
+    "Strict-Transport-Security": {
+        "desc": "Forces secure HTTPS connections, preventing traffic sniffing.", 
+        "weight": 25
+    },
+    "X-Frame-Options": {
+        "desc": "Prevents clickjacking attacks (hiding invisible clickable frames).", 
+        "weight": 20
+    },
+    "X-Content-Type-Options": {
+        "desc": "Prevents MIME-sniffing vulnerabilities.", 
+        "weight": 15
+    },
+    "Referrer-Policy": {
+        "desc": "Controls leakage of private data via cross-domain referral links.", 
+        "weight": 10
+    }
+}
+
+
+accumulated_risk_score = 0
+
+try:
+    request_setup = urllib.request.Request(target_url, headers={'User-Agent': 'Mozilla/5.0'})
+    
+    with urllib.request.urlopen(request_setup, timeout=5) as server_response:
+        received_headers = server_response.info()
+        
+        
+        for header_name, info in security_headers.items():
+            found_header = next((h for h in received_headers if h.lower() == header_name.lower()), None)
+            
+            if found_header:
+                print(f" PRESENT: [{header_name}]")
+                print(f"   Value: {received_headers[found_header]}\n")
+            else:
+                print(f" MISSING: [{header_name}] (Impact: +{info['weight']} Risk Points)")
+                print(f"   Security Risk: {info['desc']}\n")
+                # Add weight to risk score if the header is missing
+                accumulated_risk_score += info['weight']
+
+except Exception as error:
+    print(f" Connection Failed: Could not reach the website. Error: {error}")
+    sys.exit()
+
+
+print("="*60)
+print(" FINAL RISK CALCULATOR REPORT")
+print("="*60)
+print(f"Overall Risk Score: {accumulated_risk_score} / 100")
+
+
+if accumulated_risk_score == 0:
+    risk_tier = "SECURE / NO RISK (Excellent defense posture)"
+elif accumulated_risk_score <= 35:
+    risk_tier = "LOW RISK"
+elif accumulated_risk_score <= 65:
+    risk_tier = "MEDIUM RISK"
+elif accumulated_risk_score <= 89:
+    risk_tier = "HIGH RISK"
+else:
+    risk_tier = "CRITICAL RISK (Immediate remediation required)"
+
+print(f"Target Risk Rating: {risk_tier}")
+print("="*60)
