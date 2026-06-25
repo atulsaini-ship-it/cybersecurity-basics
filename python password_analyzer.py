@@ -1,32 +1,72 @@
+import string
+import secrets
 
-password = input("Enter your password to check strength: ")
-score = 0
+def check_password_strength(password):
+    """Evaluates password strength based on standard security metrics."""
+    score = 0
+    feedback = []
 
-
-if len(password) >= 8:
-    score = score + 1
-else:
-    print("Warning: Password should be at least 8 characters long.")
-
-
-if any(char.isdigit() for char in password):
-    score = score + 1
-else:
-    print("Warning: Add at least one number (0-9).")
-
-
-if any(char.isupper() for char in password):
-    score = score + 1
-else:
-    print("Warning: Add at least one capital letter (A-Z).")
-
-
-print(f"\nFinal Score: {score}/3")
-
-if score == 3:
-    print("STRONG: Good complexity!")
-elif score == 2:
-    print("MEDIUM: Acceptable, but follow the warnings above.")
-else:
-    print("WEAK: Very easy to guess or brute-force.")
     
+    if len(password) >= 12:
+        score += 1
+    else:
+        feedback.append("• Should be at least 12 characters long.")
+
+    if any(c.isupper() for c in password):
+        score += 1
+    else:
+        feedback.append("• Missing an uppercase letter (A-Z).")
+
+    if any(c.islower() for c in password):
+        score += 1
+    else:
+        feedback.append("• Missing a lowercase letter (a-z).")
+
+    if any(c.isdigit() for c in password):
+        score += 1
+    else:
+        feedback.append("• Missing a number (0-9).")
+
+    if any(c in string.punctuation for c in password):
+        score += 1
+    else:
+        feedback.append("• Missing a special character (e.g., !, @, #, $).")
+
+    
+    if score <= 2:
+        rating = " WEAK"
+    elif score <= 4:
+        rating = " MEDIUM"
+    else:
+        rating = " STRONG"
+
+    return rating, feedback
+
+def generate_strong_password(length=16):
+    """Generates a cryptographically secure random password."""
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    
+    password = ''.join(secrets.choice(alphabet) for _ in range(length))
+    return password
+
+def main():
+    print("--- 🛡️ PassFort: Password Strength Tool ---")
+    user_pass = input("Enter a password to test: ").strip()
+    
+    rating, feedback = check_password_strength(user_pass)
+    print(f"\nPassword Rating: {rating}")
+    
+    if feedback:
+        print("Suggestions to improve:")
+        for line in feedback:
+            print(line)
+            
+    if rating != " STRONG":
+        choice = input("\nWould you like to generate a strong password instead? (y/n): ").lower()
+        if choice == 'y':
+            new_pass = generate_strong_password()
+            print(f"\n[+] Your secure password: {new_pass}")
+            print("[*] Keep it safe!")
+
+if __name__ == "__main__":
+    main()
