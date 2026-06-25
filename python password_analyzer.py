@@ -50,7 +50,7 @@ def generate_strong_password(length=16):
     return password
 
 def main():
-    print("--- 🛡️ PassFort: Password Strength Tool ---")
+    print("---  PassFort: Password Strength Tool ---")
     user_pass = input("Enter a password to test: ").strip()
     
     rating, feedback = check_password_strength(user_pass)
